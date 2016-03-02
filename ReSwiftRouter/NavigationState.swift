@@ -8,7 +8,8 @@
 
 import ReSwift
 
-public typealias RouteElementIdentifier = String
+public protocol RouteElementIdentifier {}
+extension String: RouteElementIdentifier {}
 public typealias Route = [RouteElementIdentifier]
 
 public struct NavigationState {

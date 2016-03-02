@@ -26,7 +26,7 @@ public struct SetRouteAction: StandardActionConvertible {
     }
 
     public func toStandardAction() -> StandardAction {
-        return StandardAction(type: SetRouteAction.type, payload: ["route": route], isTypedAction: true)
+        return StandardAction(type: SetRouteAction.type, payload: nil, isTypedAction: true)
     }
     
 }

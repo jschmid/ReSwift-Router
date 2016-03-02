@@ -26,8 +26,7 @@ public class Router<State: StateType>: StoreSubscriber {
     }
 
     public func newState(state: NavigationState) {
-        let routingActions = Router.routingActionsForTransitionFrom(
-            lastNavigationState.route, newRoute: state.route)
+        let routingActions = routingActionsForTransitionFrom(lastNavigationState.route, newRoute: state.route)
 
         routingActions.forEach { routingAction in
 
@@ -90,27 +89,33 @@ public class Router<State: StateType>: StoreSubscriber {
 
     // MARK: Route Transformation Logic
 
-    static func largestCommonSubroute(oldRoute: Route, newRoute: Route) -> Int {
-            var largestCommonSubroute = -1
+    func largestCommonSubroute(oldRoute: Route, newRoute: Route) -> Int {
 
-            while largestCommonSubroute + 1 < newRoute.count &&
-                  largestCommonSubroute + 1 < oldRoute.count &&
-                  newRoute[largestCommonSubroute + 1] == oldRoute[largestCommonSubroute + 1] {
-                    largestCommonSubroute++
-            }
+        var largestCommonSubroute = -1
+        let maxIndex = min(oldRoute.count, newRoute.count)
 
-            return largestCommonSubroute
+        for current in 0..<maxIndex {
+            guard let lhs = oldRoute[safe: current],
+                let rhs = newRoute[safe: current],
+                let routable = routables[safe: current]
+                where routable.compare(lhs, rhs)
+                else { break }
+
+            largestCommonSubroute++
+        }
+
+        return largestCommonSubroute
     }
 
     // Maps Route index to Routable index. Routable index is offset by 1 because the root Routable
     // is not represented in the route, e.g.
     // route = ["tabBar"]
     // routables = [RootRoutable, TabBarRoutable]
-    static func routableIndexForRouteSegment(segment: Int) -> Int {
+    func routableIndexForRouteSegment(segment: Int) -> Int {
         return segment + 1
     }
 
-    static func routingActionsForTransitionFrom(oldRoute: Route,
+    func routingActionsForTransitionFrom(oldRoute: Route,
         newRoute: Route) -> [RoutingActions] {
 
             var routingActions: [RoutingActions] = []
@@ -199,4 +204,10 @@ enum RoutingActions {
     case Pop(responsibleRoutableIndex: Int, segmentToBePopped: RouteElementIdentifier)
     case Change(responsibleRoutableIndex: Int, segmentToBeReplaced: RouteElementIdentifier,
                     newSegment: RouteElementIdentifier)
+}
+
+private extension Array {
+    subscript (safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
 }

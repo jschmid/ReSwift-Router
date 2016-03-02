@@ -20,6 +20,7 @@ public protocol Routable {
     func popRouteSegment(routeElementIdentifier: RouteElementIdentifier,
         completionHandler: RoutingCompletionHandler)
 
+    func compare(lhs: RouteElementIdentifier, _ rhs: RouteElementIdentifier) -> Bool
 }
 
 extension Routable {
