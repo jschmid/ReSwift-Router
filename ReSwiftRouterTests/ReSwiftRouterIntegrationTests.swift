@@ -32,6 +32,11 @@ class FakeRoutable: Routable {
             return FakeRoutable()
     }
 
+    func compare(lhs: RouteElementIdentifier, _ rhs: RouteElementIdentifier) -> Bool {
+        guard let l = lhs as? String, let r = rhs as? String else { return false }
+        return l == r
+    }
+
 }
 
 struct FakeAppState: StateType {
@@ -76,6 +81,11 @@ class SwiftFlowRouterIntegrationTests: QuickSpec {
                                 called = true
                                 return FakeRoutable()
                         }
+
+                        func compare(lhs: RouteElementIdentifier, _ rhs: RouteElementIdentifier) -> Bool {
+                            guard let l = lhs as? String, let r = rhs as? String else { return false }
+                            return l == r
+                        }
                     }
 
                     let routable = FakeRootRoutable()
@@ -108,11 +118,16 @@ class SwiftFlowRouterIntegrationTests: QuickSpec {
                                 return FakeRoutable()
                         }
 
+                        func compare(lhs: RouteElementIdentifier, _ rhs: RouteElementIdentifier) -> Bool {
+                            guard let l = lhs as? String, let r = rhs as? String else { return false }
+                            return l == r
+                        }
+
                     }
 
                     waitUntil(timeout: 2.0) { fullfill in
                         let rootRoutable = FakeRootRoutable { identifier in
-                            if identifier == "TabBarViewController" {
+                            if identifier as? String == "TabBarViewController" {
                                 fullfill()
                             }
                         }
@@ -145,11 +160,16 @@ class SwiftFlowRouterIntegrationTests: QuickSpec {
                                 completionHandler()
                                 return FakeRoutable()
                         }
+
+                        func compare(lhs: RouteElementIdentifier, _ rhs: RouteElementIdentifier) -> Bool {
+                            guard let l = lhs as? String, let r = rhs as? String else { return false }
+                            return l == r
+                        }
                     }
 
                     waitUntil(timeout: 5.0) { completion in
                         let fakeChildRoutable = FakeChildRoutable() { identifier in
-                            if identifier == "SecondViewController" {
+                            if identifier as? String == "SecondViewController" {
                                 completion()
                             }
                         }
@@ -165,6 +185,11 @@ class SwiftFlowRouterIntegrationTests: QuickSpec {
                                 completionHandler: RoutingCompletionHandler) -> Routable {
                                     completionHandler()
                                     return injectedRoutable
+                            }
+
+                            func compare(lhs: RouteElementIdentifier, _ rhs: RouteElementIdentifier) -> Bool {
+                                guard let l = lhs as? String, let r = rhs as? String else { return false }
+                                return l == r
                             }
                         }
 
